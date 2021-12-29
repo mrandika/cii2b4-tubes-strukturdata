@@ -1,0 +1,3 @@
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/cmake-build-debug/CMakeFiles/Tugas_Besar.dir

@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/UDT/date.h
+
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/main.cpp
+iostream
+-
+utils/seed.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/utils/seed.h
+modules/menu/menu.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/menu/menu.h
+modules/auth/auth.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/auth/auth.h
+
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/auth/auth.h
+../user/user.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/user/user.h
+
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/menu/menu.h
+../user/user.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/user/user.h
+
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/user/user.h
+iostream
+-
+../../UDT/date.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/UDT/date.h
+
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/utils/seed.cpp
+seed.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/utils/seed.h
+
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/utils/seed.h
+../modules/user/user.h
+/Users/andika/Desktop/Kuliah/Struktur Data/Tugas/Tugas Besar/modules/user/user.h
+
