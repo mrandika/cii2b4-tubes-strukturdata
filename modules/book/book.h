@@ -39,7 +39,7 @@ struct book_list {
 void book_create_list(book_list &l);
 address book_create_element(infotype value);
 
-void book_insert_irst(book_list &l, book_address p);
+void book_insert_first(book_list &l, book_address p);
 void book_insert_last(book_list &l, book_address p);
 void book_insert_after(address prec, book_address p);
 

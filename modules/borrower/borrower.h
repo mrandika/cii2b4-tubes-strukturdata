@@ -29,9 +29,7 @@ struct borrow_node {
 };
 
 // Basic Function
-void borrow_create_list(user_list &l);
 borrow_address borrow_new_element(infotype value);
-void borrow_insert_first(user_list &l, borrow_address p);
 void borrow_insert_last(user_list &l, borrow_address p);
 void borrow_delete_first(user_list &l, borrow_address &p);
 void borrow_delete_last(user_list &l, borrow_address &p);
