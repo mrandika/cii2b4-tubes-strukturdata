@@ -10,12 +10,12 @@ borrow_address borrow_new_element(infotype value) {
 }
 
 void borrow_insert_last(user_list &l, borrow_address p) {
-    if (borrow_first != NULL) {
-        p = borrow_first(l);
-        while (borrow_next(p) != NULL) {
-            p = borrow_next(p)
+    if (borrow_first(l) != NULL) {
+        borrow_address q = borrow_first(l);
+        while (borrow_next(q) != NULL) {
+            q = borrow_next(q);
         }
-        borrow_next(p) = p;
+        borrow_next(q) = p;
     } else {
         borrow_first(l) = p;
     }
