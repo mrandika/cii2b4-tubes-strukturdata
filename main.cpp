@@ -2,66 +2,55 @@
 
 #include "utils/seed.h"
 #include "modules/menu/menu.h"
-#include "modules/auth/auth.h"
 
 using namespace std;
 
 int main() {
     user_list userList;
-    address userData;
+    user_address userData;
+
+    book_list bookList;
+    book_address bookData;
+
     int mainSelection, subSelection;
+
+    char ascending;
+    char backToMenu;
+    char byTitle;
+
+    string key;
 
     string email, password;
     user newUserData;
 
+    /*
+     * Populate the list with dummy data
+     */
     user_create_list(userList);
     populateUserList(userList);
+
+    book_create_list(bookList);
+    populateBookList(bookList);
+
+    populateBorrower(bookList, userList);
 
     mainSelection = main_menu();
 
     // Component - Main Menu
-    while (mainSelection >= 0 && mainSelection <= 2) {
-        switch (mainSelection) {
-            case 1:
-                cout << "Email: "; cin >> email;
-                cout << "Password: "; cin >> password;
-                userData = login(userList, email, password);
-
-                cout << endl;
-
-                if (userData != null) {
-                    mainSelection = -1;
-                    cout << "Login berhasil!" << endl;
-                } else {
-                    mainSelection = main_menu();
-                }
-
-                break;
-
-            case 2:
-                cout << "Nomor ID: "; cin >> newUserData.id;
-                cout << "Nama: "; cin >> newUserData.nama;
-                cout << "Email: "; cin >> newUserData.email;
-                cout << "Password: "; cin >> newUserData.password;
-                userData = create_user(userList, newUserData);
-
-                if (userData != null) {
-                    mainSelection = -1;
-                    cout << "Registrasi berhasil!" << endl;
-                } else {
-                    mainSelection = main_menu();
-                }
-        }
-    }
-
-    cout << endl;
+    main_menu_selection(mainSelection, email, password, userList, userData, newUserData);
 
     // Component - Sub menu
     if (mainSelection == -1 && user_info(userData).apakahAdmin) {
-        cout << user_info(userData).nama << " " << user_info(userData).apakahAdmin << endl;
+        subSelection = admin_menu(userData);
+
+        admin_menu_selection(bookList, bookData, userList, userData, subSelection, ascending, backToMenu, byTitle, key);
     } else if (!user_info(userData).apakahAdmin) {
-        cout << user_info(userData).nama << " " << user_info(userData).apakahAdmin << endl;
+        subSelection = user_menu(userData);
+
+        user_menu_selection(bookList, bookData, userData, subSelection, ascending, backToMenu, byTitle, key);
     }
+
+    cout << "Program Selesai!" << endl;
 
     return 0;
 }

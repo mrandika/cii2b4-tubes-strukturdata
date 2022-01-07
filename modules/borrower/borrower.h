@@ -9,30 +9,24 @@
 #define TUGAS_BESAR_BORROWER_H
 
 #define borrow_info(P) (P)->info
+#define borrow_user(P) (P)->user
 #define borrow_next(P) (P)->next
-#define borrow_first(L) ((L).first)
+
+typedef struct borrower borrow_infotype;
+typedef struct borrow_node *borrow_address;
 
 struct borrower {
     string id;
-    int denda;
     date tanggalPinjam, tanggalKembali;
     bool sudahKembali;
 };
 
-typedef struct borrower infotype;
-typedef struct borrow_node *borrow_address;
-
 struct borrow_node {
-    infotype info;
+    borrow_infotype info;
     user_address user;
     borrow_address next;
 };
 
-// Basic Function
-borrow_address borrow_new_element(infotype value);
-void borrow_insert_last(user_list &l, borrow_address p);
-void borrow_delete_first(user_list &l, borrow_address &p);
-void borrow_delete_last(user_list &l, borrow_address &p);
-void borrow_delete_after(user_list &l, borrow_address prec, borrow_address &p);
+borrow_address borrow_new_element(borrow_infotype value);
 
 #endif //TUGAS_BESAR_BORROWER_H

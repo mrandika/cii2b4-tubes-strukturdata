@@ -21,12 +21,12 @@ struct book {
     int stok;
 };
 
-typedef struct book infotype;
+typedef struct book book_infotype;
 typedef struct book_node *book_address;
 
 struct book_node {
     book_address prev;
-    infotype info;
+    book_infotype info;
     borrow_address first_borrower;
     book_address next;
 };
@@ -37,14 +37,36 @@ struct book_list {
 };
 
 void book_create_list(book_list &l);
-address book_create_element(infotype value);
+book_address book_create_element(book_infotype value);
 
+bool book_is_duplicate(book_list &l, string isbn);
 void book_insert_first(book_list &l, book_address p);
 void book_insert_last(book_list &l, book_address p);
-void book_insert_after(address prec, book_address p);
+void book_insert_after(book_address prec, book_address p);
+void book_insert_ascending(book_list &l, book_address p);
 
-void book_delete_first(list &l, book_address p);
-void book_delete_last(list &l, book_address p);
-void book_delete_after(address prec, book_address p);
+void book_delete_first(book_list &l, book_address p);
+void book_delete_last(book_list &l, book_address p);
+void book_delete_after(book_address prec, book_address p);
+void book_delete(book_list &l, book_address p);
+
+void borrow_delete_first(book_list &l, book_address p);
+void borrow_delete_last(book_list &l, book_address p, borrow_address &b);
+void borrow_delete_after(borrow_address prec, borrow_address &p);
+void borrow_delete_data(book_list &l, book_address book, string id);
+
+void show_book(book_list &l, bool ascending);
+void lookup_book(book_list &l, bool byTitle, string key);
+book_address search_book(book_list &l, bool byTitle, string key);
+
+void show_book_borrower(book_address book);
+void borrowed_book(book_list &l, user_address user);
+void show_user_borrowed_book(book_list &l, user_address user);
+void show_all_user_borrowed_book(book_list &l, user_list &u);
+
+int get_borrowed_count(book_list l, user_address user);
+int get_borrow_id(book_address book);
+void borrow_book(book_list l, book_address book, user_address user, bool seed_mode);
+void return_book(book_address book, user_address user, string id);
 
 #endif //TUGAS_BESAR_BOOK_H

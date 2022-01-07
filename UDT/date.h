@@ -11,6 +11,9 @@ struct date {
     int tahun;
 };
 
+void date_operation(struct tm* date, int days);
+
 date get_today_date();
+date get_14d_date();
 
 #endif //TUGAS_BESAR_DATE_H

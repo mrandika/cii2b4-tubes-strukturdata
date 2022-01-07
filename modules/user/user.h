@@ -20,6 +20,7 @@ struct user {
     string id;
     string nama, email, password;
     bool apakahAdmin;
+    bool akunAktif;
     date tanggalDaftar;
 };
 
@@ -38,14 +39,15 @@ struct user_list {
 // Basic Function
 void user_create_list(user_list &l);
 user_address user_new_element(infotype value);
-void user_insert_first(user_list &l, user_address p);
 void user_insert_last(user_list &l, user_address p);
-void user_delete_first(user_list &l, user_address &p);
-void user_delete_last(user_list &l, user_address &p);
-void user_delete_after(user_list &l, user_address prec, user_address &p);
+
+// Admin Function
+user_address user_search_email(user_list &l, string email);
+void user_change_status(user_address p, int status);
 
 // Auth Function
 bool user_is_email_registered(user_list l, string email);
 user_address user_search_credential(user_list l, string email, string password);
+void user_logout(user_address &p);
 
 #endif //TUGAS_BESAR_USER_H
