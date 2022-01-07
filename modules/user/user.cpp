@@ -1,79 +1,114 @@
+#include <iostream>
 #include "user.h"
 
+using namespace std;
+
 void user_create_list(user_list &l) {
-    user_first(l) = NULL
+    user_first(l) = null;
 }
 
 user_address user_new_element(infotype value) {
-    user_address p = new user_node;
-    user_info(p) = value;
-    user_next(p) = NULL
-}
+    user_address newNode;
 
-void user_insert_first(user_list &l, user_address p) {
-    if (user_first(l) != NULL) {
-        next(p) = user_first(l);
-        user_first(l) = p;
-    } else {
-        user_first(l) = p;
-    }
+    newNode = new user_node;
+
+    user_info(newNode) = value;
+    user_next(newNode) = null;
+
+    return newNode;
 }
 
 void user_insert_last(user_list &l, user_address p) {
-    if (user_first(l) != NULL) {
-        user_address q = user_first(l);
-        while (user_next(q) != NULL) {
-            q = user_next(q);
-        }
-        user_next(q) = p;
-    } else {
+    user_address node;
+
+    if (user_first(l) == null) {
         user_first(l) = p;
-    }
-}
-
-void user_delete_first(user_list &l, user_address &p) {
-    if (user_first(l) == NULL) {
-        cout << "Kosong" << endl;
-    } else if (next(user_first(l)) == NULL) {
-        user_first(l) = NULL;
     } else {
-        p = user_first(l);
-        user_first(l) = user_next(p);
-        p = NULL;
-    }
-}
+        node = user_first(l);
 
-void user_delete_last(user_list &l, user_address &p) {
-    user_address q;
-    if (user_first(l) == NULL) {
-        cout << "Kosong" << endl;
-    } else if (next(user_first(l)) == NULL) {
-        user_first(l) = NULL;
-    } else {
-        p = user_first(l);
-        while (user_next(p) != NULL) {
-            p = user_next(p);
+        while (user_next(node) != null) {
+            node = user_next(node);
         }
-        p = NULL;
+
+        user_next(node) = p;
     }
 }
 
-void user_delete_after(user_list &l, user_address prec, user_address &p) {
-    if (user_first(l) == NULL) {
-        cout << "Kosong" << endl;
-    } else if (user_next(user_first(l) == NULL)) {
-        user_first(l) = NULL;
-    } else {
-        p = user_next(prec);
-        user_next(prec) = user_next(p);
-        p = NULL;
+user_address user_search_email(user_list &l, string email) {
+    bool found;
+    user_address node;
+
+    node = user_first(l);
+    found = false;
+
+    while (node != null && !found) {
+        if (user_info(node).email == email) {
+            found = true;
+        } else {
+            node = user_next(node);
+        }
     }
+
+    if (!found) {
+        node = null;
+    }
+
+    return node;
+}
+
+void user_change_status(user_address p, int status) {
+    user_info(p).akunAktif = status;
 }
 
 bool user_is_email_registered(user_list l, string email) {
+    user_address node;
+    bool found;
 
+    node = user_first(l);
+    found = false;
+
+    if (user_first(l) != null) {
+        while (node != null && !found) {
+            if (user_info(node).email == email) {
+                found = true;
+            } else {
+                node = user_next(node);
+            }
+        }
+    }
+
+    return found;
 }
 
 user_address user_search_credential(user_list l, string email, string password) {
+    user_address node;
+    bool found;
 
+    node = user_first(l);
+    found = false;
+
+    if (user_first(l) == null) {
+        cout << "Data pengguna tidak ditemukan." << endl;
+    } else {
+        while (node != null && !found) {
+            if (user_info(node).email == email && user_info(node).password == password && user_info(node).akunAktif) {
+                found = true;
+            } else {
+                node = user_next(node);
+            }
+        }
+    }
+
+    if (!found) {
+        cout << "Login gagal, data login tidak ditemukan!" << endl;
+        node = null;
+    } else {
+        cout << "Login berhasil!" << endl;
+    }
+
+    return node;
+}
+
+void user_logout(user_address &p) {
+    p = null;
 }
