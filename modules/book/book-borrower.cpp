@@ -47,9 +47,7 @@ void borrow_delete_data(book_list &l, book_address book, string id) {
         borrow_delete_last(l, book, borrow_node);
     } else {
         while (borrow_node != null) {
-            else {
-                borrow_delete_after(prev_borrow_node, borrow_node);
-            }
+            borrow_delete_after(prev_borrow_node, borrow_node);
 
             prev_borrow_node = borrow_node;
             borrow_node = borrow_next(borrow_node);

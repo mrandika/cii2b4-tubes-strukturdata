@@ -1,0 +1,26 @@
+Function login(userList : user_list, email : string, password : string) -> user_address
+Kamus data
+Algoritma
+    return user_search_credential(userList, email, password)
+endfunction
+
+Function create_user(userList : user_list, data : user) -> user_address
+Kamus data
+    isEmailAlreadyRegistered : bool
+    userElement : user_address
+Algoritma
+    userElement <- NULL
+    isEmailAlreadyRegistered <- user_is_email_registered(userList, data.email)
+
+    if isEmailAlreadyRegistered = true then
+        output("Email sudah terdaftar, gunakan email lain!")
+    else
+        data.tanggalDaftar <- get_today_date()
+        data.apakahAdmin <- data.id[0] = 3 AND data.id[1] = 1
+        data.akunAktif <- true
+
+        userElement <- user_new_element(data)
+        user_insert_last(userList, userElement)
+    endif
+    return userElement
+endfunction

@@ -1,0 +1,11 @@
+function borrow_new_element(value : borrow_infotype) -> borrow_address
+Kamus data
+    p : borrow_address
+Algoritma
+    p <- new borrow_node
+    borrow_info <- value
+    user_next <- NULL
+    borrow_next <- NULL
+
+    return p
+endfunction

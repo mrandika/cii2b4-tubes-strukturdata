@@ -1,0 +1,249 @@
+procedure borrow_delete_first(in/out l : book_list, in p : book_address)
+Kamus data
+    borrow_node : borrow_address
+Algoritma
+    borrow_node <- book_first_borrower(p)
+
+    if borrow_next(borrow_node) = NULL then
+        book_first_borrower(p) <- NULL
+    else
+        book_first_borrower(p) <- borrow_next(borrow_node)
+        borrow_node <- NULL
+    endif
+endprocedure
+
+procedure borrow_delete_last(in/out l : book_list, in p : book_address, in/out b : borrow_address)
+Kamus data
+    borrow_node : borrow_address
+Algoritma
+    borrow_node <- book_first_borrower(p)
+    
+    while borrow_next(borrow_node) <> b do
+        borrow_node <- borrow_next(borrow_node)
+    endwhile
+
+    b <- borrow_next(borrow_node)
+    borrow_next(borrow_node) <- borrow_next(b)
+    borrow_next(b) <- NULL
+endprocedure
+
+procedure borrow_delete_after(in prec : borrow_address, in/out p : borrow_address)
+Kamus data
+Algoritma
+    borrow_next(prec) <- borrow_next(p)
+    prec <- NULL
+endprocedure
+
+procedure borrow_delete_data(in/out l book_list, in book : book_address, id : string)
+Kamus data
+    prev_borrow_node, borrow_node : borrow_address
+Algoritma
+    borrow_node <- book_first_borrower(book)
+
+    if book_first_borrower(book)->info.id = id then
+        borrow_delete_first(l, book)
+    else if id = to_string(get_borrow_id(book) - 1) then
+        borrow_delete_last(l, book, borrow_node)
+    else
+        while borrow_node <> NULL do
+            borrow_delete_after(prev_borrow_node, borrow_node)
+
+            prev_borrow_node <- borrow_node
+            borrow_node <- borrow_next(borrow_node)
+        endwhile
+    endif
+endprocedure
+
+function get_borrowed_count(l : book_list, user : user_address) -> integer
+Kamus data
+    num : integer
+    node : book_address
+    borrow_node : borrow_address
+Algoritma
+    num <- 0
+    node <- book_first(l)
+
+    while node <> NULL do
+        borrow_node <- book_first_borrower(node)
+
+        while borrow_node <> NULL do
+            if borrow_node->user = user then
+                num = num + 1
+            endif
+
+            borrow_node <- borrow_next(borrow_node)
+        endwhile
+        
+        node <- book_next(node)
+    endwhile
+    
+    return num
+endfunction
+
+function get_borrow_id(book : book_address) -> integer
+Kamus data
+    num : integer
+    borrow_node : borrow_address
+Algoritma
+    num <- 0
+    borrow_node = book_first_borrower(book)
+
+    while borrow_node <> NULL do
+        num = num + 1
+        borrow_node <- borrow_next(borrow_node)
+    endwhile
+
+    return num
+endfunction
+
+    
+procedure borrowed_book(in/out l : book_list, in user : user_address)
+Kamus data
+    book : book
+    node : book_address
+    borrow_node : borrow_address
+Algoritma
+    node <- book_first(l)
+
+    if book_first(l) <> NULL AND book_last(l) <> NULL then
+        while node <> NULL do
+            book <- book_info(node)
+            borrow_node <- book_first_borrower(node)
+
+            while borrow_node <> NULL do
+                if borrow_node->user - user AND NOT borrow_info(borrow_node).sudahKembali then
+                    output("ID: ", borrow_info(borrow_node).id + ". ", book.judul, " (", book.isbn, ") ")
+                endif
+
+                borrow_node <- borrow_next(borrow_node)
+            endwhile
+
+            node <- book_next(node)
+        endwhile
+    endif
+endprocedure
+
+procedure show_book_borrower(in book : book_address)
+Kamus data
+    borrow_node : borrow_address
+Algoritma
+    if book <> NULL then
+        borrow_node <- book_first_borrower(book)
+
+        while borrow_node <> NULL do
+            output("ID: ", borrow_info(borrow_node).id + ". ", book_info(book).judul, " (", book_info(book).isbn, ") - ", user_info(borrow_node->user).email)
+
+            borrow_node <- borrow_next(borrow_node)
+        endwhile
+    endif
+endprocedure
+
+procedure show_user_borrowed_book(in/out l : book_list, in user : user_address)
+Kamus data
+    num : integer
+    book : book
+    book_node : book_address
+    borrow_node : borrow_address
+Algoritma
+    num <- 1
+    book_node <- book_first(l)
+
+    output("Peminjaman ", user_info(user).email, ": ")
+
+    while book_node <> NULL do
+        borrow_node <- book_first_borrower(book_node)
+
+        while borrow_node <> NULL do
+
+            if borrow_node->user = user then
+            output(num, ". ", book_info(book_node).judul, " pada tanggal ", borrow_info(borrow_node).tanggalPinjam.tanggal, "/", borrow_info(borrow_node).tanggalPinjam.bulan, "/", borrow_info(borrow_node).tanggalPinjam.tahun, ".")
+            num = num + 1;
+            endif
+
+            borrow_node <- borrow_next(borrow_node)
+        endwhile
+
+        book_node <- book_next(book_node)
+    endwhile
+endprocedure
+
+procedure show_all_user_borrowed_book(in/out l : book_list, u : user_list)
+Kamus data
+    node : user_address
+Algoritma
+    node <- user_first(u)
+
+    if user_first(u) <> NULL then
+        while node <> NULL do
+            show_user_borrowed_book(l, node)
+
+            output()
+
+            node <- user_next(node)
+        endwhile
+    endif
+endprocedure
+
+procedure borrow_book(in l : book_list, book : book_address, user : user_address, seed_mode : boolean)
+Kamus data
+    borrower : borrower
+    b : borrow_address
+    borrow : borrow_address
+Algoritma
+    if get_borrowed_count(l, user) < 3 then
+        borrower.id <- to_string(get_borrow_id(book))
+        borrower.tanggalPinjam <- get_today_date()
+        borrower.tanggalKembali <- get_14d_date()
+        borrower.sudahKembali <- false
+
+        borrow <- borrow_new_element(borrower)
+        borrow_user(borrow) <- user
+
+        if book_first_borrower(book) = NULL then
+            book_first_borrower(book) <- borrow
+        else
+            b <- book_first_borrower(book)
+        
+            while borrow_next(b) <> NULL do
+                b <- borrow_next(b)
+            endwhile
+
+            borrow_next(b) <- borrow
+        endif
+
+        book_info(book).stok = book_info(book).stok - 1
+
+        if NOT seed_mode then
+            output("Buku ", book_info(book).judul, " berhasil dipinjam.", " Kembalikan buku sebelum ", borrower.tanggalKembali.tanggal, "/", borrower.tanggalKembali.bulan, "/", borrower.tanggalKembali.tahun, ".")
+        endif
+    else
+        if NOT seed_mode then
+            output("Gagal meminjam buku, kuota peminjaman anda telah habis.")
+        endif
+    endif
+endprocedure
+
+procedure return_book(in book : book_address,user : user_address, id : string)
+Kamus data
+    found : boolean 
+    borrow : borrow_address
+Algoritma
+    found <- false
+    borrow <- book_first_borrower(book)
+
+    while borrow <> NULL AND NOT found do
+        if borrow->user = user AND borrow_info(borrow).id = id then
+            found <- true
+            book_info(book).stok = book_info(book).stok + 1
+            borrow_info(borrow).sudahKembali <- true
+        else
+            borrow <- borrow_next(borrow)
+        endif
+    endwhile
+
+    if NOT found then
+        out("Gagal mengembalikan buku!")
+    else
+        output("Buku berhasil dikembalikan, terima kasih!")
+    endif
+endprocedure

@@ -1,0 +1,116 @@
+procedure user_create_list(in/out l : user_list)
+Kamus data
+Algoritma
+    user_first(l) < NULL
+endprocedure
+
+function user_new_element(value : infotype) -> user_address
+Kamus data
+    newNode : user_address
+Algoritma
+    newNode <- new user_node
+
+    user_info(newNode) <- value
+    user_next(newNode) <- NULL
+
+    return newNode
+endfunction
+
+procedure user_insert_last(in/out l : user_list, in p : user_address)
+Kamus data
+    node : user_address 
+Algoritma
+    if user_first(l) = NULL then
+        user_first(l) <- p
+    else
+        node <- user_first(l)
+
+        while user_next(node) <> NULL do
+            node = user_next(node);
+        endwhile
+
+        user_next(node) <- p
+    endif
+endprocedure
+
+function user_search_email(l : user_list, email : string) -> user_address
+Kamus data
+    found : boolean 
+    node : user_address
+Algoritma
+    node <- user_first(l)
+    found <- false
+
+    while node <> NULL AND NOT found do
+        if user_info(node).email = email then
+            found <- true
+        else
+            node <- user_next(node)
+        endif
+    endwhile
+
+    if NOT found then
+        node <- NULL
+    endif
+
+    return node
+endfunction
+
+procedure user_change_status(in p : user_address, status : integer)
+    user_info(p).akunAktif <- status
+endprocedure
+
+function user_is_email_registered(l : user_list, email : string) -> boolean
+Kamus data
+    node : user_address
+    found : boolean
+Algoritma
+    node <- user_first(l)
+    found <- false
+
+    if user_first(l) <> NULL then
+        while node <> NULL AND NOT found do
+            if user_info(node).email = email then
+                found <- true
+            else
+                node <- user_next(node)
+            endif
+        endwhile
+    endif
+
+    return found
+endfunction
+
+function user_search_credential(l : user_list, email : string, password : string) -> user_address
+Kamus data
+    node : user_address
+    found : boolean
+Algoritma
+    node <- user_first(l)
+    found <- false
+
+    if user_first(l) = NULL then
+        output("Data pengguna tidak ditemukan.")
+    else
+        while node <> NULL AND NOT found do
+            if user_info(node).email = email AND user_info(node).password = password AND user_info(node).akunAktif then
+                found <- true
+            else
+                node <- user_next(node)
+            endif
+        endwhile
+    endif
+
+    if NOT found then
+        output("Login gagal, data login tidak ditemukan!")
+        node <- NULL
+    else
+        output("Login berhasil!")
+    endif
+
+    return node
+endfunction
+
+procedure user_logout(in/out p : user_address)
+    p <- NULL
+endprocedure

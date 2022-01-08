@@ -1,0 +1,255 @@
+procedure book_create_list(in/out l : book_list)
+Kamus data
+Algoritma
+    book_first(l) <- NULL
+    book_last(l) <- NULL
+endprocedure
+
+function book_create_element(value : book_infotype) -> book_address
+Kamus data
+    p : book_address
+Algoritma
+    p <- new book_node
+    book_prev(p) <- NULL
+    book_info(p) <- value
+    book_first_borrower(p) <- NULL
+    book_next(p) <- NULL
+
+    return p
+endfunction
+
+function book_is_duplicate(in/out l : book_list, in isbn : string) -> boolean
+Kamus data
+    duplicate : boolean
+    book : book
+    node : book_address
+Algoritma
+    duplicate <- false
+    node <- book_first(l)
+
+    if book_first(l) <> NULL AND book_last(l) <> NULL then
+        while node <> NULL AND NOT duplicate do
+            book <- book_info(node)
+
+            if book_info(node).isbn = isbn then
+                duplicate <- true
+            endif
+
+            node = book_next(node)
+        endwhile
+    endif
+
+    return duplicate
+endfunction
+
+procedure book_insert_first(in/out l : book_list, in p : book_address)
+Kamus data
+Algoritma
+    if book_first(l) <> NULL then
+        book_next(p) <- book_first(l)
+        book_prev(book_next(p)) <- p
+        book_first(l) <- p
+    else
+        book_first(l) <- p
+        book_last(l) <- p
+    endif
+endprocedure
+
+procedure book_insert_last(in/out l : book_list, in p : book_address)
+Kamus data
+Algoritma
+    if book_last(l) <> NULL then
+        book_prev(p) <- book_last(l)
+        book_next(book_prev(p)) <- p
+        book_last(l) <- p
+    else
+        book_first <- p
+        book_last <- p
+    endif
+endprocedure
+
+procedure book_insert_after(in prec, p : book_address)
+Kamus data
+Algoritma
+    book_next(p) <- book_next(prec)
+    book_prev(p) < prec
+    book_prev(book_next(prec)) <- p
+    book_next(prec) <- p
+endprocedure
+
+procedure book_insert_ascending(in/out l : book_list, in p : book_address)
+Kamus data
+    node : book_address
+Algoritma
+    if book_first(l) = NULL AND book_last(l) = NULL OR book_info(p).judul.compare(book_info(book_first(l)).judul) < 0 then
+        book_insert_first(l, p)
+    else if book_info(p).judul.compare(book_info(book_last(l)). judul) > 0 then
+        book_insert_last(l, p)
+    else
+        node <- book_first(l)
+
+        while node <> NULL AND book_info(p).judul.compare(book_info(node). judul) > 0
+            node <- book_next(node)
+        endwhile
+
+        book_insert_after(book_prev(node), p)
+    endif
+endprocedure
+
+procedure book_delete_first(in/out l : book_list, in p : book_address)
+Kamus data
+Algoritma
+    p <- book_first(l)
+
+    if book_next(p) = NULL then
+        book_first(l) <- NULL
+        book_last(l) <- NULL
+    else
+        book_first(l) <- book_next(book_first(l))
+        book_prev(book_first(l)) <- NULL
+        book_next(p) <- NULL
+    endif
+endprocedure 
+
+procedure book_delete_last(in/out l : book_list, in p : book_address)
+Kamus data
+Algoritma
+    p <- book_last(l)
+
+    if book_first(l) <> NULL AND book_last(l) <> NULL then
+        p <- book_last(l)
+        book_last(l) <- book_prev(book_last(l))
+        book_prev(p) <- NULL
+        book_next(book_last(l)) <- NULL
+    else
+        p <- book_first(l)
+        book_first(l) <- NULL
+        book_last(l) <- NULL
+    endif
+endprocedure
+
+procedure book_delete_after(in prec, p : book_address)
+Kamus data
+Algoritma
+    p <- book_next(prec)
+    book_next(prec) <- book_next(p)
+    book_prev(book_next(p)) <- prec
+    book_next(p) <- NULL
+    book_prev(p) <- NULL
+endprocedure
+
+procedure book_delete(in/out l : book_list, in p : book_address)
+Kamus data
+    node : book_address
+Algoritma
+    if p = book_first(l) then
+        book_delete_first(l, p)
+    else if p = book_last(l) then
+        book_delete_last(l, p)
+    else
+        node <- book_first(l)
+
+        while book_info(node).isbn <> book_info(p).isbn do
+             node <- book_next(node)
+        endwhile
+
+        book_delete_after(book_prev(node), book_last(l))
+    endif
+endprocedure
+
+procedure show_book(in/out l : book_list, in ascending : boolean)
+Kamus data
+    num : integer
+    book : book
+    node : book_address
+Algoritma
+    if ascending then
+        node <- book_first(l)
+    else
+        node <- book_last(l)
+    endif
+
+    if book_first(l) <> NULL AND book_last(l) <> NULL then
+        num <- 1
+        while node <> NULL do
+            book <- book_info(node)
+
+            if book_info(node).stok > 0 then
+                output(to_string(num) + ". ", book.judul, " (", book.isbn, ")", ", tersedia", book.stok)
+                num <- num + 1
+            endif
+
+            if ascending <- true then
+                node <- book_next(node)
+            else
+                node <- book_prev(node)
+            endif
+        endwhile
+    endif
+endprocedure
+
+procedure lookup_book(in/out l : book_list, in byTitle : boolean, in key : string)
+Kamus data
+    num : integer
+    book : book
+    node : book_address
+    found : boolean
+Algoritma
+    node <- book_first(l)
+
+    if book_first(l) <> NULL AND book_last(l) <> NULL then
+        num <- 0
+        while node <> NULL AND book_info(node).stok > 0 AND NOT found do
+            book <- book_info(node)
+
+            if book.judul = key OR book.isbn = key then
+                found <- true
+            endif
+
+            node <- book_next(node)
+            num <- num + 1
+        endwhile
+
+        if byTitle then
+            output("Buku dengan judul ", key)
+        else
+            output("buku dengan ISBN ", key)
+        endif
+
+        if NOT found then
+            node <- NULL
+
+            output(" tidak ditemukan")
+        else
+            output(" ditemukan pada baris", num)
+        endif
+    endif
+endprocedure
+
+function search_book(l : book_list, byTitle : boolean, key : string) -> book_address
+Kamus data
+    book : book
+    node : book_address
+    found : boolean
+Algoritma
+    node <- book_first(l)
+    found <- false
+
+    if book_first(l) <> NULL AND book_last(l) <> NULL then
+        while node <> NULL AND NOT found do
+            book <- book_info(node)
+
+            if book.judul = key OR book.isbn = key then
+                found <- true
+            else
+                node <- book_next(node)
+            endif
+        endwhile
+    endif
+
+    if NOT found then
+        node <- NULL
+    endif
+
+    return node
+endfunction
