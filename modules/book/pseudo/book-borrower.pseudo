@@ -34,24 +34,50 @@ Algoritma
     prec <- NULL
 endprocedure
 
+function borrow_search_id(in book : book_address, id : string)
+Kamus data
+    found : bool
+    node : borrow_address
+Algoritma
+    node <- book_first_borrower(book)
+
+    while node <> NULL AND NOT found do
+        if borrow_info(node).id = id then
+            found <- true
+        else
+            node <- borrow_next(node)
+        endif
+    endwhile
+
+    if NOT found then
+        node <- NULL
+    endif
+
+    return node
+endfunction
+
 procedure borrow_delete_data(in/out l book_list, in book : book_address, id : string)
 Kamus data
-    prev_borrow_node, borrow_node : borrow_address
+    prev_borrow_node, borrow_node, node : borrow_address
 Algoritma
+    node <- borrow_search_id(book, id)
     borrow_node <- book_first_borrower(book)
+    prev_borrow_node <- borrow_node
 
-    if book_first_borrower(book)->info.id = id then
-        borrow_delete_first(l, book)
-    else if id = to_string(get_borrow_id(book) - 1) then
-        borrow_delete_last(l, book, borrow_node)
-    else
-        while borrow_node <> NULL do
-            borrow_delete_after(prev_borrow_node, borrow_node)
+    while borrow_node <> NULL do
+        if borrow_info(borrow_node).id = id then
+            if book_first_borrower(book) == borrow_node then
+                borrow_delete_first(l, book)
+            else if borrow_next(node) == NULL then
+                borrow_delete_last(l, book, node)
+            else
+                borrow_delete_after(prev_borrow_node, borrow_node)
+            endif
+        endif
 
-            prev_borrow_node <- borrow_node
-            borrow_node <- borrow_next(borrow_node)
-        endwhile
-    endif
+        prev_borrow_node <- borrow_node
+        borrow_node <- borrow_next(borrow_node);
+    endwhile
 endprocedure
 
 function get_borrowed_count(l : book_list, user : user_address) -> integer

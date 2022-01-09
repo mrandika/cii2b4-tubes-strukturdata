@@ -4,31 +4,31 @@
 
 #include "book.h"
 
-void borrow_delete_first(book_list &l, book_address p) {
-    borrow_address borrow_node;
+void borrow_delete_first(book_list &l, book_address s) {
+    borrow_address p;
 
-    borrow_node = book_first_borrower(p);
+    p = book_first_borrower(s);
 
-    if (borrow_next(borrow_node) == null) {
-        book_first_borrower(p) = null;
+    if (borrow_next(p) == null) {
+        book_first_borrower(s) = null;
     } else {
-        book_first_borrower(p) = borrow_next(borrow_node);
-        borrow_node = null;
+        book_first_borrower(s) = borrow_next(p);
+        p = null;
     }
 }
 
-void borrow_delete_last(book_list &l, book_address p, borrow_address &b) {
-    borrow_address borrow_node;
+void borrow_delete_last(book_list &l, book_address s, borrow_address &j) {
+    borrow_address p;
 
-    borrow_node = book_first_borrower(p);
+    p = book_first_borrower(s);
 
-    while (borrow_next(borrow_node) != b) {
-        borrow_node = borrow_next(borrow_node);
+    while (borrow_next(p) != j) {
+        p = borrow_next(p);
     }
 
-    b = borrow_next(borrow_node);
-    borrow_next(borrow_node) = borrow_next(b);
-    borrow_next(b) = null;
+    j = borrow_next(p);
+    borrow_next(p) = borrow_next(j);
+    borrow_next(j) = null;
 }
 
 void borrow_delete_after(borrow_address prec, borrow_address &p) {
@@ -36,22 +36,47 @@ void borrow_delete_after(borrow_address prec, borrow_address &p) {
     prec = null;
 }
 
-void borrow_delete_data(book_list &l, book_address book, string id) {
-    borrow_address prev_borrow_node, borrow_node;
+borrow_address borrow_search_id(book_address book, string id) {
+    bool found;
+    borrow_address node;
 
-    borrow_node = book_first_borrower(book);
+    node = book_first_borrower(book);
 
-    if (book_first_borrower(book)->info.id == id) {
-        borrow_delete_first(l, book);
-    } else if (id == to_string(get_borrow_id(book) - 1)) {
-        borrow_delete_last(l, book, borrow_node);
-    } else {
-        while (borrow_node != null) {
-            borrow_delete_after(prev_borrow_node, borrow_node);
-
-            prev_borrow_node = borrow_node;
-            borrow_node = borrow_next(borrow_node);
+    while (node != null && !found) {
+        if (borrow_info(node).id == id) {
+            found = true;
+        } else {
+            node = borrow_next(node);
         }
+    }
+
+    if (!found) {
+        node = null;
+    }
+
+    return node;
+}
+
+void borrow_delete_data(book_list &l, book_address book, string id) {
+    borrow_address prev_borrow_node, borrow_node, node;
+
+    node = borrow_search_id(book, id);
+    borrow_node = book_first_borrower(book);
+    prev_borrow_node = borrow_node;
+
+    while(borrow_node != null) {
+        if (borrow_info(borrow_node).id == id) {
+            if (book_first_borrower(book) == borrow_node) {
+                borrow_delete_first(l, book);
+            } else if (borrow_next(node) == null) {
+                borrow_delete_last(l, book, node);
+            } else {
+                borrow_delete_after(prev_borrow_node, borrow_node);
+            }
+        }
+
+        prev_borrow_node = borrow_node;
+        borrow_node = borrow_next(borrow_node);
     }
 }
 

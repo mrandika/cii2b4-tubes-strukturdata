@@ -43,7 +43,7 @@ int admin_menu(user_address user) {
     cout << "6. Tampilkan Peminjam (User)" << endl;
     cout << "7. Non-aktifkan Akun Pengguna" << endl;
     cout << "8. Aktifkan Akun Pengguna" << endl;
-    // cout << "9. Hapus Data Peminjaman" << endl;
+    cout << "9. Hapus Data Peminjaman" << endl;
     cout << "0. Logout" << endl << endl;
 
     cout << "Pilih menu: "; cin >> input;
@@ -371,37 +371,37 @@ void admin_menu_selection(book_list &bookList, book_address &bookData, user_list
                 }
 
                 break;
-//            case 9:
-//                cout << "Cari buku berdasarkan Judul? (Y/N): "; cin >> byTitle;
-//
-//                if (tolower(byTitle) == 'y') {
-//                    cout << "Masukan judul buku: "; cin >> key;
-//                } else {
-//                    cout << "Masukan ISBN buku: "; cin >> key;
-//                }
-//
-//                bookData = search_book(bookList, tolower(byTitle) == 'y', key);
-//
-//                if (bookData != null) {
-//                    show_book_borrower(bookData);
-//
-//                    cout << "Masukan ID Pinjaman: "; cin >> key;
-//
-//                    borrow_delete_data(bookList, bookData, key);
-//
-//                } else {
-//                    cout << "Buku tidak ditemukan atau stok habis!";
-//                }
-//
-//                cout << endl;
-//
-//                cout << "Kembali ke menu awal? (Y/N): "; cin >> backToMenu;
-//
-//                if (tolower(backToMenu) == 'y') {
-//                    cout << endl;
-//                    subSelection = admin_menu(userData);
-//                }
-//                break;
+            case 9:
+                cout << "Cari buku berdasarkan Judul? (Y/N): "; cin >> byTitle;
+
+                if (tolower(byTitle) == 'y') {
+                    cout << "Masukan judul buku: "; cin >> key;
+                } else {
+                    cout << "Masukan ISBN buku: "; cin >> key;
+                }
+
+                bookData = search_book(bookList, tolower(byTitle) == 'y', key);
+
+                if (bookData != null) {
+                    show_book_borrower(bookData);
+
+                    cout << "Masukan ID Pinjaman: "; cin >> key;
+
+                    borrow_delete_data(bookList, bookData, key);
+
+                } else {
+                    cout << "Buku tidak ditemukan atau stok habis!";
+                }
+
+                cout << endl;
+
+                cout << "Kembali ke menu awal? (Y/N): "; cin >> backToMenu;
+
+                if (tolower(backToMenu) == 'y') {
+                    cout << endl;
+                    subSelection = admin_menu(userData);
+                }
+                break;
 
             case 0:
                 user_logout(userData);

@@ -45,7 +45,7 @@ Algoritma
     output("6. Tampilkan Peminjam (User)")
     output("7. Non-aktifkan Akun Pengguna")
     output("8. Aktifkan Akun Pengguna")
-    // output("9. Hapus Data Peminjaman")
+    output("9. Hapus Data Peminjaman")
     output("0. Logout")
     output()
     input <- input("Pilih menu: ")
@@ -378,37 +378,37 @@ Kamus data
                 endif
 
                 break
-//            case 9:
-//                byTitle <- output("Cari buku berdasarkan Judul? (Y/N): ")
-//
-//                if tolower(byTitle) = 'y' then
-//                    key <- input("Masukan judul buku: ")
-//                else
-//                    key <- input("Masukan ISBN buku: ")
-//                endif
-//
-//                bookData <- search_book(bookList, tolower(byTitle) = 'y', key)
-//
-//                if bookData <> NULL then
-//                    show_book_borrower(bookData)
-//
-//                    key <- input("Masukan ID Pinjaman: ")
-//
-//                    borrow_delete_data(bookList, bookData, key)
-//
-//                else
-//                    output("Buku tidak ditemukan atau stok habis!")
-//                endif
-//
-//                output()
-//
-//                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
-//
-//                if tolower(backToMenu) = 'y' then
-//                    output()
-//                    subSelection <- admin_menu(userData)
-//                endif
-//                break
+           case 9:
+               byTitle <- output("Cari buku berdasarkan Judul? (Y/N): ")
+
+               if tolower(byTitle) = 'y' then
+                   key <- input("Masukan judul buku: ")
+               else
+                   key <- input("Masukan ISBN buku: ")
+               endif
+
+               bookData <- search_book(bookList, tolower(byTitle) = 'y', key)
+
+               if bookData <> NULL then
+                   show_book_borrower(bookData)
+
+                   key <- input("Masukan ID Pinjaman: ")
+
+                   borrow_delete_data(bookList, bookData, key)
+
+               else
+                   output("Buku tidak ditemukan atau stok habis!")
+               endif
+
+               output()
+
+               backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+               if tolower(backToMenu) = 'y' then
+                   output()
+                   subSelection <- admin_menu(userData)
+               endif
+               break
 
             case 0
                 user_logout(userData)
