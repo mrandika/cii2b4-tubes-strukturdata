@@ -1,0 +1,418 @@
+function main_menu() -> integer
+Kamus data
+    input : integer
+Algoritma
+    input <- 0
+
+    output("=== Selamat Datang di Perpustakaan Universitas X ===")
+    output("1. Masuk/Login")
+    output("2. Daftar/Register")
+    output("0. Exit")
+    output()
+    input <- input("Pilih menu: ")
+    return input
+endfunction
+
+function user_menu(user : user_address) -> integer
+Kamus data
+    input : integer
+Algoritma
+    input <- 0
+
+    output("=== Halo, ", user_info(user).nama, " (user) selamat Datang di Perpustakaan Universitas X ===")
+    output("1. Telusuri Buku")
+    output("2. Pencarian Buku")
+    output("3. Tampilkan Peminjaman Buku")
+    output("4. Pinjam Buku")
+    output("5. Kembalikan Buku")
+    output("0. Logout")
+    output()
+    input <- input("Pilih menu: ")
+    return input;
+endfunction
+
+function admin_menu(user : user_address) -> integer
+Kamus data
+    input : integer
+Algoritma
+    input <- 0
+    output("=== Halo, ", user_info(user).nama, " (admin) selamat Datang di Perpustakaan Universitas X ===")
+    output("1. Tampilkan Semua Buku")
+    output("2. Tambahakan Buku")
+    output("3. Hapus Buku")
+    output("4. Pencarian Buku")
+    output("5. Tampilkan Peminjam (Semua)")
+    output("6. Tampilkan Peminjam (User)")
+    output("7. Non-aktifkan Akun Pengguna")
+    output("8. Aktifkan Akun Pengguna")
+    // output("9. Hapus Data Peminjaman")
+    output("0. Logout")
+    output()
+    input <- input("Pilih menu: ")
+    return input;
+endfunction
+
+procedure main_menu_selection(in/out mainSelection : integer , email : string, password : string, userList : user_list, userData : user_address, newUserData : user)
+Kamus data
+Algoritma
+    while mainSelection > 0 AND mainSelection <= 2 do
+        switch mainSelection
+            case 1
+                email <- input("Email: ")
+                password <- input("Password: ")
+                userData <- login(userList, email, password);
+
+                output()
+
+                if userData <> NULL then
+                    mainSelection <- -1
+                else
+                    mainSelection <- main_menu()
+                endif
+
+                break
+
+            case 2
+                newUserData.id <- input("Nomor ID: ")
+                newUserData.nama <- input("Nama: ")
+                newUserData.email <- input("Email: ")
+                newUserData.password <- input("Password: ")
+                userData <- create_user(userList, newUserData)
+
+                if userData <> NULL then
+                    mainSelection <- -1
+                else
+                    mainSelection <- main_menu()
+                endif
+
+                break
+        endswitch
+    endwhile
+endprocedure
+
+procedure user_menu_selection(in/out bookList : book_list, bookData : book_address, userData : user_address, subSelection : integer, ascending : char, backToMenu : char, byTitle : char, key : string)
+Kamus data
+Algoritma
+    while subSelection >= 0 AND subSelection <= 5 do
+        switch subSelection
+            case 1
+                ascending <- input("Telusuri buku secara ascending? (Y/N): ")
+
+                show_book(bookList, tolower(ascending) = 'y')
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    cout << endl;
+                    subSelection = user_menu(userData);
+                endif
+
+                break
+            case 2
+                byTitleoutput <- input("Cari buku berdasarkan Judul? (Y/N): ")
+
+                if tolower(byTitle) = 'y' then
+                    key <- input("Masukan judul buku: ")
+                else
+                    key <- input("Masukan ISBN buku: ")
+                endif
+
+                lookup_book(bookList, tolower(byTitle) = 'y', key)
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- user_menu(userData)
+                endif
+
+                break
+            case 3
+                output("Data buku yang kamu pinjam: ")
+
+                borrowed_book(bookList, userData)
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- user_menu(userData)
+                endif
+
+                break
+            case 4
+                byTitle <- input("Cari buku berdasarkan Judul? (Y/N): ")
+
+                if tolower(byTitle) = 'y' then
+                    key <- input("Masukan judul buku: ")
+                else
+                    key <- input("Masukan ISBN buku: ")
+                endif
+
+                bookData <- search_book(bookList, tolower(byTitle) = 'y', key)
+
+                if (bookData <> NULL) then
+                    borrow_book(bookList, bookData, userData, false)
+                else
+                    output("Buku tidak ditemukan atau stok habis!")
+                endif
+
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- user_menu(userData)
+                endif
+
+                break
+            case 5
+                borrowed_book(bookList, userData)
+                output()
+
+                key <- input("Masukan Judul Buku: ")
+                bookData <- search_book(bookList, true, key)
+
+                key <- input("Masukan ID Peminjaman: ")
+
+                return_book(bookData, userData, key)
+
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- user_menu(userData)
+                endif
+
+                break
+            case 0
+                user_logout(userData)
+                subSelection <- -1
+        endswitch
+    endwhile
+endprocedure
+
+procedure admin_menu_selection(in/out bookList : book_list, bookData : book_address, userList : user_list, userData : user_address, subSelection : integer, ascending : char, backToMenu : char, byTitle : char, key : string)
+Kamus data
+    book : book
+    user_result : user_address
+
+    while subSelection >= 0 AND subSelection <= 9 do
+        switch subSelection
+            case 1
+                ascending <- input("Tampilkan buku secara ascending? (Y/N): ")
+
+                show_book(bookList, tolower(ascending) = 'y')
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- admin_menu(userData);
+                endif
+
+                break
+
+            case 2
+                book.isbn <- input("ISBN: ")
+                book.judul <- input("Judul: ")
+                book.penulis <- input("Penulis: ")
+                book.versi cout <- input("Versi: ")
+                book.tanggalRilis.tanggal <- input("Tanggal Rilis (Tanggal): ")
+                book.tanggalRilis.bulan <- input("Tanggal Rilis (Bulan): ")
+                book.tanggalRilis.tahun <- input("Tanggal Rilis (Tahun): ")
+                book.stok cout <- input("Stok: ")
+
+                if (!book_is_duplicate(bookList, book.isbn)) then
+                    bookData <- book_create_element(book)
+                    book_insert_ascending(bookList, bookData)
+
+                    output()
+                else 
+                    output("Buku duplikat! ISBN ", book.isbn, " ditemukan pada list.")
+                endif
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = y then
+                    output()
+                    subSelection <- admin_menu(userData)
+                endif
+
+                break
+
+            case 3
+                byTitle <- input("Cari buku berdasarkan Judul? (Y/N): ")
+
+                if tolower(byTitle) = 'y' then
+                    key <- input("Masukan judul buku: ")
+                else
+                    key <- input("Masukan ISBN buku: ")
+                endif
+
+                bookData <- search_book(bookList, tolower(byTitle) = 'y', key
+
+                if (bookData <> NULL) then
+                    book_delete(bookList, bookData);
+                else
+                    output("Buku tidak ditemukan atau stok habis!")
+                endif
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- admin_menu(userData);
+                }
+
+                break;
+
+            case 4
+                byTitle <- input("Cari buku berdasarkan Judul? (Y/N): ")
+
+                if tolower(byTitle) = 'y' then
+                    key <- input("Masukan judul buku: ")
+                else
+                    key <- input("Masukan ISBN buku: ")
+                endif
+
+                bookData <- search_book(bookList, tolower(byTitle) = 'y', key)
+
+                if bookData <> NULL then
+                    borrow_book(bookList, bookData, userData, false)
+                else
+                    output("Buku tidak ditemukan atau stok habis!")
+                endif
+
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- admin_menu(userData)
+                endif
+
+                break
+
+            case 5
+                show_all_user_borrowed_book(bookList, userList)
+
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y'
+                    output()
+                    subSelection <- admin_menu(userData);
+                endif
+
+                break
+            case 6
+            key <- output("Masukan email pengguna: ")
+
+                user_result <- user_search_email(userList, key)
+
+                if user_result <> NULL then
+                    show_user_borrowed_book(bookList, user_result);
+                else
+                    output("Pengguna tidak ditemukan!")
+                endif
+
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- admin_menu(userData)
+                endif
+
+                break
+            case 7
+                key <- output("Masukan email pengguna: ")
+
+                user_result <- user_search_email(userList, key)
+
+                if user_result <> NULL then
+                    user_change_status(user_result, 0)
+                else then
+                    output("Pengguna tidak ditemukan!")
+                endif
+
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- admin_menu(userData)
+                endif
+
+                break
+            case 8:
+                key <- input("Masukan email pengguna: ")
+
+                user_result <- user_search_email(userList, key)
+
+                if user_result <> NULL then
+                    user_change_status(user_result, 1)
+                else
+                    output("Pengguna tidak ditemukan!")
+                endif
+
+                output()
+
+                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+
+                if tolower(backToMenu) = 'y' then
+                    output()
+                    subSelection <- admin_menu(userData)
+                endif
+
+                break
+//            case 9:
+//                byTitle <- output("Cari buku berdasarkan Judul? (Y/N): ")
+//
+//                if tolower(byTitle) = 'y' then
+//                    key <- input("Masukan judul buku: ")
+//                else
+//                    key <- input("Masukan ISBN buku: ")
+//                endif
+//
+//                bookData <- search_book(bookList, tolower(byTitle) = 'y', key)
+//
+//                if bookData <> NULL then
+//                    show_book_borrower(bookData)
+//
+//                    key <- input("Masukan ID Pinjaman: ")
+//
+//                    borrow_delete_data(bookList, bookData, key)
+//
+//                else
+//                    output("Buku tidak ditemukan atau stok habis!")
+//                endif
+//
+//                output()
+//
+//                backToMenu <- input("Kembali ke menu awal? (Y/N): ")
+//
+//                if tolower(backToMenu) = 'y' then
+//                    output()
+//                    subSelection <- admin_menu(userData)
+//                endif
+//                break
+
+            case 0
+                user_logout(userData)
+                subSelection <- -1
+        endswitch
+    endwhile
+endprocedure
